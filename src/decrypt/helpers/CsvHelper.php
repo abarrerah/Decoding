@@ -1,0 +1,50 @@
+<?php 
+
+class CsvHelper{
+
+    public function getDecodedInfo(array $csvContent)
+    {
+        $result = [];
+        $headers = false;
+        foreach($csvContent as $csvRow) {
+            if (!$headers) {
+                $result[] = $csvRow;
+                $headers = true;
+                continue;
+            } else {
+                $result[] = $this->decodeCsvRow($csvRow);
+            }
+        }
+
+        return $result;
+    }
+
+    protected function decodeCsvRow(array $row)
+    {
+        $result = [];
+        foreach($row as $index => $rowContent){
+            if ($index === 0) {
+                continue;
+            } else {
+                if ($index === 1) {
+                    $secondColumn = str_split($rowContent);
+                } else {
+                    $thirdColumn = str_split($rowContent);
+					$secondColumnLength = count($secondColumn);
+					$countThirdColumnLength = 1;
+					$rowCalc = 0;
+					foreach($thirdColumn as $thirdColumnContent) {
+						$letterFound = array_search($thirdColumnContent, $secondColumn);
+						$inverseArrayPosition = count($thirdColumn) - $countThirdColumnLength;
+						$calc = $letterFound * pow($secondColumnLength, $inverseArrayPosition);
+						$rowCalc += $calc;
+						$countThirdColumnLength++;
+					}
+                    $result[] = $rowCalc;
+                }
+            }
+        }
+        return $result;
+    }
+}
+?>

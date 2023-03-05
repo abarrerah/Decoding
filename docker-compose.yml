@@ -1,0 +1,42 @@
+version: "3.8"
+services:    
+    db:
+        image: mysql
+        container_name: web-server-database
+        ports: 
+            - "6033:3306"
+        command: --default-authentication-plugin=mysql_native_password
+        environment:
+            MYSQL_DATABASE: dbname
+            MYSQL_PASSWORD: test
+            MYSQL_ROOT_PASSWORD: test 
+        volumes:
+            - ./dump:/docker-entrypoint-initdb.d
+            - ./conf:/etc/mysql/conf.d
+            - persistent:/var/lib/mysql
+        networks:
+            - default
+    web:
+        build: .
+        container_name: web-server-apache
+        ports: 
+            - "80:80"
+        volumes:
+            - ./src:/var/www/html
+        links:
+            - db
+        networks:
+            - default
+    phpmyadmin:
+        container_name: web-server-phpmyadmin
+        image: phpmyadmin/phpmyadmin
+        links: 
+            - db:db
+        ports:
+            - 8000:80
+        environment:
+            MYSQL_USER: root
+            MYSQL_PASSWORD: test
+            MYSQL_ROOT_PASSWORD: test 
+volumes:
+    persistent:
