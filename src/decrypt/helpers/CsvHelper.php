@@ -2,6 +2,21 @@
 
 class CsvHelper{
 
+    public function addResultToCsv(array $csv, array $result) 
+    {
+        $resultCsv = [];
+        foreach($csv as $index => $csvRow) {
+            if ($index != 0) {
+                $csvRow[] = $result[$index];
+            } else {
+                $csvRow[] = "Resultado Cálculo";
+            }
+            $resultCsv[] = $csvRow;
+        }
+
+        return $resultCsv;
+    }
+
     public function getDecodedInfo(array $csvContent)
     {
         $result = [];
